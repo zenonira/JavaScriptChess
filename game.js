@@ -13,27 +13,29 @@ function start() {
     document.body.appendChild(movesBox);
 }
 
+var colorLocations = "red";
+var showMovesFlag = false;
+
 function toggleShow() {
     if (showMovesFlag) {
         //change to false
         showMovesFlag = false;
         document.getElementById("showMoves").style.background='';
+        removeLocs();
     } else {
         //change to true
         showMovesFlag = true;
         document.getElementById("showMoves").style.background='red';
+        drawLocs();
     }
 }
 
 var selectedPiece;
 var possibleLoc;
-var enLocs = []; //Enpatant locations
+var enLocs = []; //En passant locations
 enLocs.length = 16;
 enLocs.fill(0);
 var whiteSet = 8;
-
-var colorLocations = "red";
-var showMovesFlag = false;
 
 function clickPiece(location) {
     var locX = parseInt(parseInt(location)%10);
@@ -64,7 +66,8 @@ function clickPiece(location) {
                 speicalPawn();
             }
             //selecting a piece of the same team
-            removeLocs(location-oldLocation);
+            removeLocs();
+            possibleLoc.length = 0;
             selected = false;
         }
     } else {
@@ -83,6 +86,7 @@ function clickPiece(location) {
             }
         }
         removeLocs();
+        possibleLoc.length = 0;
         selected = false;
     }
 }
