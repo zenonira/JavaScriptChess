@@ -2,6 +2,27 @@ var playerTurn = true;  //true = white, false = black
 var selected = false;   //true = selected, false = not selected
 function start() {
     createBoard();
+    var showMoves = document.createElement("button");
+    // showMoves.setAttribute("id", "showMoves");
+    showMoves.setAttribute("onclick", "toggleShow()");
+    showMoves.innerHTML = "Show Possible Moves";
+    document.body.appendChild(showMoves);
+
+    var movesBox = document.createElement("div");
+    movesBox.setAttribute("id", "showMoves");
+    document.body.appendChild(movesBox);
+}
+
+function toggleShow() {
+    if (showMovesFlag) {
+        //change to false
+        showMovesFlag = false;
+        document.getElementById("showMoves").style.background='';
+    } else {
+        //change to true
+        showMovesFlag = true;
+        document.getElementById("showMoves").style.background='red';
+    }
 }
 
 var selectedPiece;
@@ -11,10 +32,13 @@ enLocs.length = 16;
 enLocs.fill(0);
 var whiteSet = 8;
 
+var colorLocations = "red";
+var showMovesFlag = false;
+
 function clickPiece(location) {
     var locX = parseInt(parseInt(location)%10);
     var locY = parseInt(parseInt(location)/10);
-    console.log(locX, "---", locY);
+    //console.log(locX, "---", locY);
     if (cells[locY][locX] !== null) {
         //if the square selected is has a piece
         var pTeam = cells[locY][locX].team;
@@ -27,7 +51,7 @@ function clickPiece(location) {
             selected = true;
         } else if (selected) {
             //selecting a piece of the enemy team and can move there
-            if (document.getElementById(String(location)).style.backgroundColor == "red") {
+            if (pieceCheck(location)) {
                 //Move Piece
                 var oldLocation = selectedPiece.getPos();
                 updateCell(locX, locY, selectedPiece);
@@ -38,7 +62,6 @@ function clickPiece(location) {
                 playerTurn = !playerTurn;
                 enCheck();
                 speicalPawn();
-                console.log("PAWN LOCS", location-oldLocation);
             }
             //selecting a piece of the same team
             removeLocs(location-oldLocation);
@@ -47,7 +70,7 @@ function clickPiece(location) {
     } else {
         //if the square selected does not have a piece
         if (selected) {
-            if (document.getElementById(String(location)).style.backgroundColor == "red") {
+            if (pieceCheck(location)) {
                 var oldLocation = selectedPiece.getPos();
                 updateCell(locX, locY, selectedPiece);
                 updateCell(parseInt(parseInt(oldLocation)%10), parseInt(parseInt(oldLocation)/10), null);
@@ -57,7 +80,6 @@ function clickPiece(location) {
                 playerTurn = !playerTurn;
                 enCheck();
                 speicalPawn(location-oldLocation);
-                console.log("PAWN LOCS2", location-oldLocation);
             }
         }
         removeLocs();
@@ -75,7 +97,9 @@ function drawLocs() {
                 var locX = parseInt(possibleLoc[spot][i]%10);
                 var locY = parseInt(possibleLoc[spot][i]/10);
                 //All possible locs should be good to go 
-                document.getElementById(String(possibleLoc[spot][i])).style.backgroundColor = "red";
+                if (showMovesFlag) {
+                    document.getElementById(String(possibleLoc[spot][i])).style.backgroundColor = colorLocations;
+                }
             }
         } else if (possibleLoc[spot] !== null) {
             //King, Pawn, Knights dont have checking so I need to check if they are going to move onto a piece that is there own team
@@ -86,8 +110,8 @@ function drawLocs() {
                     drawRed = false;
                 }
             }
-            if (drawRed) {
-                document.getElementById(String(possibleLoc[spot])).style.backgroundColor = "red";
+            if (drawRed && showMovesFlag) {
+                document.getElementById(String(possibleLoc[spot])).style.backgroundColor = colorLocations;
             }
         }
     }
@@ -106,10 +130,8 @@ function speicalPawn(movement) {
         }
         enLocs.fill(0);
         if (Math.abs(movement) == 20) {
-            console.log(tempAdd);
             enLocs[tempAdd] = selectedPiece.getPos()-backSpace;
         }
-        console.log(enLocs);
         selectedPiece.firstMoveFalse();
     }
 }
@@ -157,7 +179,6 @@ function removeLocs() {
 function enCheck() {
     for (let i = 0; i < enLocs.length; i++) {
         if (enLocs[i] == selectedPiece.getPos()) {
-            console.log("remove piece");
             var backSpace = 10;
             if (playerTurn) {
                 //If white team
@@ -167,5 +188,19 @@ function enCheck() {
             updateCell(selectedPiece.xcord, selectedPiece.ycord+(backSpace/10), null);
             document.getElementById("img-" + String(emptyCell)).src = '';
         }
+    }
+}
+
+function pieceCheck(location) {
+    var i = 0;
+    if (Array.isArray(possibleLoc[0])) {
+        for (let i = 0; i < possibleLoc.length; i++) {
+            if (possibleLoc[i].includes(parseInt(location))) {
+                return true;
+            }
+        }
+        return false;
+    } else {
+        return possibleLoc.includes(parseInt(location));
     }
 }

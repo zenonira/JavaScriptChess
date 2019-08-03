@@ -60,14 +60,12 @@ class Pawn extends Piece {
             //Checking if it can take a piece diagonally
             if (this.xcord != 7) {
                 //diagonal towards right side of board
-                console.log("EN test ", this.xcord+1+teamAdd, this.ycord, enLocs[this.xcord+1+teamAdd]);
                 if (cells[this.ycord+mov][this.xcord+1] != null || (enLocs[this.xcord+1+teamAdd] != 0 && this.ycord == yAdd)) {
                     this.moves.push(this.xcord+1+((this.ycord+mov)*10));
                 }
             }
             if (this.xcord != 0) {
                 //diagonal towards left side of board
-                console.log("EN test ", this.xcord-1+teamAdd, this.ycord, enLocs[this.xcord-1+teamAdd]);
                 if (cells[this.ycord+mov][this.xcord-1] != null || (enLocs[this.xcord-1+teamAdd] != 0 && this.ycord == yAdd)) {
                     this.moves.push(this.xcord-1+((this.ycord+mov)*10));
                 }
@@ -303,7 +301,6 @@ class Rook extends Piece {
         
     }
     updateImage() {
-        console.log(this.getImage());
         document.getElementById("img-" + String(super.getPos())).src = this.getImage();
     }
 }

@@ -5,6 +5,12 @@
     border-collapse: collapse;
 }
 
+#showMoves {
+    height: 22px;
+    width: 20px;
+    float: left;
+}
+
 .pic {
     height: 50px;
     width: 50px;
