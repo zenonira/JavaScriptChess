@@ -3,7 +3,6 @@ var selected = false;   //true = selected, false = not selected
 function start() {
     createBoard();
     var showMoves = document.createElement("button");
-    // showMoves.setAttribute("id", "showMoves");
     showMoves.setAttribute("onclick", "toggleShow()");
     showMoves.innerHTML = "Show Possible Moves";
     document.body.appendChild(showMoves);
@@ -11,6 +10,11 @@ function start() {
     var movesBox = document.createElement("div");
     movesBox.setAttribute("id", "showMoves");
     document.body.appendChild(movesBox);
+
+    var resetButton = document.createElement("button");
+    resetButton.setAttribute("onclick", "resetPieces()");
+    resetButton.innerHTML = "Reset Game";
+    document.body.appendChild(resetButton);
 }
 
 var colorLocations = "red";
@@ -63,7 +67,7 @@ function clickPiece(location) {
                 selectedPiece.updateImage();
                 playerTurn = !playerTurn;
                 enCheck();
-                speicalPawn();
+                speicalPawn(location-oldLocation);
             }
             //selecting a piece of the same team
             removeLocs();

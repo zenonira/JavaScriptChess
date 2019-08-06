@@ -35,6 +35,8 @@ function createBoard() {
         }
     }
 
+    resetPieces();
+    /*
     whiteRook1.updateImage();
     whiteKnight1.updateImage();
     whiteKnight2.updateImage();
@@ -68,6 +70,7 @@ function createBoard() {
     blackPawn6.updateImage();
     blackPawn7.updateImage();
     blackPawn8.updateImage();
+    */
 }
 
 
@@ -113,6 +116,7 @@ blackPawn6 = new Pawn(5,1,"black");
 blackPawn7 = new Pawn(6,1,"black");
 blackPawn8 = new Pawn(7,1,"black");
 
+/*
 updateCell(0, 7, whiteRook1);
 updateCell(1, 7, whiteKnight1);
 updateCell(2, 7, whiteBishop1);
@@ -146,7 +150,148 @@ updateCell(4, 1, blackPawn5);
 updateCell(5, 1, blackPawn6);
 updateCell(6, 1, blackPawn7);
 updateCell(7, 1, blackPawn8);
+*/
 
 function updateCell(xcord, ycord, p) {
     cells[ycord][xcord] = p;
+}
+
+function resetPieces() {
+    //Remove all Pieces from middle of board
+    for (let i = 2; i < 6; i++) {
+        for (let j = 0; j < 8; j++) {
+            document.getElementById("img-" + String(j+(i*10))).src = '';
+            cells[i][j] = null;
+        }
+    }
+
+    //Reset pieces position trackers
+    whiteRook1.updatePos2(0,7);
+    whiteKnight1.updatePos2(1,7);
+    whiteBishop1.updatePos2(2,7);
+    whiteQueen.updatePos2(3,7);
+    whiteKing.updatePos2(4,7);
+    whiteBishop2.updatePos2(5,7);
+    whiteKnight2.updatePos2(6,7);
+    whiteRook2.updatePos2(7,7);
+    whitePawn1.updatePos2(0,6);
+    whitePawn2.updatePos2(1,6);
+    whitePawn3.updatePos2(2,6);
+    whitePawn4.updatePos2(3,6);
+    whitePawn5.updatePos2(4,6);
+    whitePawn6.updatePos2(5,6);
+    whitePawn7.updatePos2(6,6);
+    whitePawn8.updatePos2(7,6);
+
+    blackRook1.updatePos2(0,0);
+    blackKnight1.updatePos2(1,0);
+    blackBishop1.updatePos2(2,0);
+    blackQueen.updatePos2(3,0);
+    blackKing.updatePos2(4,0);
+    blackBishop2.updatePos2(5,0);
+    blackKnight2.updatePos2(6,0);
+    blackRook2.updatePos2(7,0);
+    blackPawn1.updatePos2(0,1);
+    blackPawn2.updatePos2(1,1);
+    blackPawn3.updatePos2(2,1);
+    blackPawn4.updatePos2(3,1);
+    blackPawn5.updatePos2(4,1);
+    blackPawn6.updatePos2(5,1);
+    blackPawn7.updatePos2(6,1);
+    blackPawn8.updatePos2(7,1);
+
+    //Reset piece location on cell 2D array
+    updateCell(0, 7, whiteRook1);
+    updateCell(1, 7, whiteKnight1);
+    updateCell(2, 7, whiteBishop1);
+    updateCell(3, 7, whiteQueen);
+    updateCell(4, 7, whiteKing);
+    updateCell(5, 7, whiteBishop2);
+    updateCell(6, 7, whiteKnight2);
+    updateCell(7, 7, whiteRook2);
+    updateCell(0, 6, whitePawn1);
+    updateCell(1, 6, whitePawn2);
+    updateCell(2, 6, whitePawn3);
+    updateCell(3, 6, whitePawn4);
+    updateCell(4, 6, whitePawn5);
+    updateCell(5, 6, whitePawn6);
+    updateCell(6, 6, whitePawn7);
+    updateCell(7, 6, whitePawn8);
+
+    updateCell(0, 0, blackRook1);
+    updateCell(1, 0, blackKnight1);
+    updateCell(2, 0, blackBishop1);
+    updateCell(3, 0, blackQueen);
+    updateCell(4, 0, blackKing);
+    updateCell(5, 0, blackBishop2);
+    updateCell(6, 0, blackKnight2);
+    updateCell(7, 0, blackRook2);
+    updateCell(0, 1, blackPawn1);
+    updateCell(1, 1, blackPawn2);
+    updateCell(2, 1, blackPawn3);
+    updateCell(3, 1, blackPawn4);
+    updateCell(4, 1, blackPawn5);
+    updateCell(5, 1, blackPawn6);
+    updateCell(6, 1, blackPawn7);
+    updateCell(7, 1, blackPawn8);
+
+    //Re-draw Pieces
+    whiteRook1.updateImage();
+    whiteKnight1.updateImage();
+    whiteKnight2.updateImage();
+    whiteRook2.updateImage();
+    whiteKing.updateImage();
+    whiteQueen.updateImage();
+    whiteBishop1.updateImage();
+    whiteBishop2.updateImage();
+    whitePawn1.updateImage();
+    whitePawn2.updateImage();
+    whitePawn3.updateImage();
+    whitePawn4.updateImage();
+    whitePawn5.updateImage();
+    whitePawn6.updateImage();
+    whitePawn7.updateImage();
+    whitePawn8.updateImage();
+
+    blackRook1.updateImage();
+    blackKnight1.updateImage();
+    blackKnight2.updateImage();
+    blackRook2.updateImage();
+    blackKing.updateImage();
+    blackQueen.updateImage();
+    blackBishop1.updateImage();
+    blackBishop2.updateImage();
+    blackPawn1.updateImage();
+    blackPawn2.updateImage();
+    blackPawn3.updateImage();
+    blackPawn4.updateImage();
+    blackPawn5.updateImage();
+    blackPawn6.updateImage();
+    blackPawn7.updateImage();
+    blackPawn8.updateImage();
+
+    //Reset Pawns first move
+    whitePawn1.firstMoveTrue();
+    whitePawn2.firstMoveTrue();
+    whitePawn3.firstMoveTrue();
+    whitePawn4.firstMoveTrue();
+    whitePawn5.firstMoveTrue();
+    whitePawn6.firstMoveTrue();
+    whitePawn7.firstMoveTrue();
+    whitePawn8.firstMoveTrue();
+
+    blackPawn1.firstMoveTrue();
+    blackPawn2.firstMoveTrue();
+    blackPawn3.firstMoveTrue();
+    blackPawn4.firstMoveTrue();
+    blackPawn5.firstMoveTrue();
+    blackPawn6.firstMoveTrue();
+    blackPawn7.firstMoveTrue();
+    blackPawn8.firstMoveTrue();
+
+    //Make sure White goes first
+    playerTurn = true;
+    //Make sure no pieces are selected
+    selectedPiece = false;
+    removeLocs();
 }

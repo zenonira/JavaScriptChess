@@ -9,13 +9,13 @@ class Piece {
     Returns the position of the piece, y is the 10's digit, x is the ones digit
     */
     getPos() {
-        return this.xcord + this.ycord*10;
+        return (this.xcord + this.ycord*10);
     }
 
     /*
     Updates the position of the piece given and x cordinate and a y cordinate
     */
-    updatePos(newX, newY) {
+    updatePos2(newX, newY) {
         this.xcord = newX;
         this.ycord = newY;
     }
@@ -77,6 +77,9 @@ class Pawn extends Piece {
     */
     firstMoveFalse() {
         this.firstMove = false;
+    }
+    firstMoveTrue() {
+        this.firstMove = true;
     }
     /*
     Returns the path to the image of the piece
