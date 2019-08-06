@@ -12,3 +12,5 @@ To run, download zip file and extract to desired folder. Execute(double click) c
 Future Things to add:
     -Game end when a king is taken
     -Acknowledge when a player is in check
+    -Castling
+    -Fix King Movement

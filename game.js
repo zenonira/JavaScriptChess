@@ -15,6 +15,10 @@ function start() {
     resetButton.setAttribute("onclick", "resetPieces()");
     resetButton.innerHTML = "Reset Game";
     document.body.appendChild(resetButton);
+
+    var checkLoc = document.createElement("p");
+    checkLoc.setAttribute("id", "checkLoc");
+    document.body.appendChild(checkLoc);
 }
 
 var colorLocations = "red";
@@ -51,17 +55,19 @@ function clickPiece(location) {
         if (((playerTurn && pTeam == "white") || (!playerTurn && pTeam == "black")) && !selected) {
             //selecting a piece of the team whoes turn it is and no piece is selected
             selectedPiece = cells[locY][locX];
-            selectedPiece.getMoves();
-            possibleLoc = selectedPiece.moves;
+            
+            possibleLoc = selectedPiece.getMoves().slice(0);
             drawLocs();
             selected = true;
         } else if (selected) {
             //selecting a piece of the enemy team and can move there
             movePiece(location);
+            checkCheck();
         }
     } else {
         //if the square selected does not have a piece
         movePiece(location);
+        checkCheck();
     }
 }
 
@@ -92,28 +98,15 @@ function drawLocs() {
     var drawRed = true;
     for (const spot in possibleLoc) {
         drawRed = true;
-        //If possibleLoc is an array
-        if (Array.isArray(possibleLoc[spot])) {
-            for (let i = 0; i < possibleLoc[spot].length; i++) {
-                var locX = parseInt(possibleLoc[spot][i]%10);
-                var locY = parseInt(possibleLoc[spot][i]/10);
-                //All possible locs should be good to go 
-                if (showMovesFlag) {
-                    document.getElementById(String(possibleLoc[spot][i])).style.backgroundColor = colorLocations;
-                }
+        var locX = parseInt(possibleLoc[spot]%10);
+        var locY = parseInt(possibleLoc[spot]/10);
+        if (cells[locY][locX] !== null) {
+            if (((playerTurn && cells[locY][locX].team == "white") || (!playerTurn && cells[locY][locX].team == "black"))) {
+                drawRed = false;
             }
-        } else if (possibleLoc[spot] !== null) {
-            //King, Pawn, Knights dont have checking so I need to check if they are going to move onto a piece that is there own team
-            var locX = parseInt(possibleLoc[spot]%10);
-            var locY = parseInt(possibleLoc[spot]/10);
-            if (cells[locY][locX] !== null) {
-                if (((playerTurn && cells[locY][locX].team == "white") || (!playerTurn && cells[locY][locX].team == "black"))) {
-                    drawRed = false;
-                }
-            }
-            if (drawRed && showMovesFlag) {
-                document.getElementById(String(possibleLoc[spot])).style.backgroundColor = colorLocations;
-            }
+        }
+        if (drawRed && showMovesFlag) {
+            document.getElementById(String(possibleLoc[spot])).style.backgroundColor = colorLocations;
         }
     }
 }
@@ -139,39 +132,19 @@ function speicalPawn(movement) {
 
 function removeLocs() {
     for (const spot in possibleLoc) {
-        if (Array.isArray(possibleLoc[spot])) {
-            for (let i = 0; i < possibleLoc[spot].length; i++) {
-                var locX = parseInt(possibleLoc[spot][i]%10);
-                var locY = parseInt(possibleLoc[spot][i]/10);
-                if (locX%2 == 0) {
-                    if (locY%2 == 0) {
-                        document.getElementById(String(possibleLoc[spot][i])).style.backgroundColor = "white";
-                    } else {
-                        document.getElementById(String(possibleLoc[spot][i])).style.backgroundColor = "green";
-                    }
-                } else {
-                    if (locY%2 == 0) {
-                        document.getElementById(String(possibleLoc[spot][i])).style.backgroundColor = "green";
-                    } else {
-                        document.getElementById(String(possibleLoc[spot][i])).style.backgroundColor = "white";
-                    }
-                }
-            }
-        } else if (possibleLoc[spot] !== null) {
-            var locX = parseInt(possibleLoc[spot]%10);
-            var locY = parseInt(possibleLoc[spot]/10);
-            if (locX%2 == 0) {
-                if (locY%2 == 0) {
-                    document.getElementById(String(possibleLoc[spot])).style.backgroundColor = "white";
-                } else {
-                    document.getElementById(String(possibleLoc[spot])).style.backgroundColor = "green";
-                }
+        var locX = parseInt(possibleLoc[spot]%10);
+        var locY = parseInt(possibleLoc[spot]/10);
+        if (locX%2 == 0) {
+            if (locY%2 == 0) {
+                document.getElementById(String(possibleLoc[spot])).style.backgroundColor = "white";
             } else {
-                if (locY%2 == 0) {
-                    document.getElementById(String(possibleLoc[spot])).style.backgroundColor = "green";
-                } else {
-                    document.getElementById(String(possibleLoc[spot])).style.backgroundColor = "white";
-                }
+                document.getElementById(String(possibleLoc[spot])).style.backgroundColor = "green";
+            }
+        } else {
+            if (locY%2 == 0) {
+                document.getElementById(String(possibleLoc[spot])).style.backgroundColor = "green";
+            } else {
+                document.getElementById(String(possibleLoc[spot])).style.backgroundColor = "white";
             }
         }
     }
@@ -193,19 +166,34 @@ function enCheck() {
 }
 
 function pieceCheck(location) {
-    var i = 0;
-    if (Array.isArray(possibleLoc[0])) {
-        for (let i = 0; i < possibleLoc.length; i++) {
-            if (possibleLoc[i].includes(parseInt(location))) {
-                return true;
-            }
-        }
-        return false;
-    } else {
-        return possibleLoc.includes(parseInt(location));
-    }
+    return possibleLoc.includes(parseInt(location));
 }
 
 function checkCheck() {
+    var futureMoves = selectedPiece.getMoves().slice(0);
+    console.log(JSON.stringify(futureMoves));
+    for (const spot in futureMoves) {
+            var locX = parseInt(futureMoves[spot]%10);
+            var locY = parseInt(futureMoves[spot]/10);
+            checkKing(locX, locY);
+    }
+}
 
+function checkKing(locX, locY) {
+    var notifyCheck = '';
+    if (selectedPiece.team == "white") {
+        if (cells[locY][locX] == blackKing) {
+            notifyCheck = "Black is in Check";
+        } else {
+            notifyCheck = "";
+        }
+    } else {
+        if (cells[locY][locX] == whiteKing) {
+            notifyCheck = "White is in Check";
+        } else {
+            notifyCheck = "";
+        }
+    }
+    console.log(notifyCheck);
+    document.getElementById("checkLoc").innerHTML = notifyCheck;
 }
