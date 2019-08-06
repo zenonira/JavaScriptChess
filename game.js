@@ -24,6 +24,8 @@ function start() {
 var colorLocations = "red";
 var showMovesFlag = false;
 
+var inCheck = false;
+
 function toggleShow() {
     if (showMovesFlag) {
         //change to false
@@ -172,28 +174,35 @@ function pieceCheck(location) {
 function checkCheck() {
     var futureMoves = selectedPiece.getMoves().slice(0);
     console.log(JSON.stringify(futureMoves));
+    inCheck = false;
     for (const spot in futureMoves) {
-            var locX = parseInt(futureMoves[spot]%10);
-            var locY = parseInt(futureMoves[spot]/10);
-            checkKing(locX, locY);
+        var locX = parseInt(futureMoves[spot]%10);
+        var locY = parseInt(futureMoves[spot]/10);
+        if (!inCheck) {
+            inCheck = checkKing(locX, locY);;
+        }
     }
 }
 
 function checkKing(locX, locY) {
     var notifyCheck = '';
+    var check = false;
     if (selectedPiece.team == "white") {
         if (cells[locY][locX] == blackKing) {
             notifyCheck = "Black is in Check";
+            check = true;
         } else {
             notifyCheck = "";
         }
     } else {
         if (cells[locY][locX] == whiteKing) {
             notifyCheck = "White is in Check";
+            check = true;
         } else {
             notifyCheck = "";
         }
     }
-    console.log(notifyCheck);
+    console.log(JSON.stringify(notifyCheck), JSON.stringify("should print this"));
     document.getElementById("checkLoc").innerHTML = notifyCheck;
+    return check;
 }

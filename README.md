@@ -10,7 +10,6 @@ Show Possible Moves button allows the users to toggle whether or not to show pos
 To run, download zip file and extract to desired folder. Execute(double click) chess.html which will open up a web browser (I have been using chrome)
 
 Future Things to add:
-    -Game end when a king is taken
-    -Acknowledge when a player is in check
+    -Game end whith checkMate
+    -If in check, only move to get out of check
     -Castling
-    -Fix King Movement
