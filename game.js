@@ -57,42 +57,35 @@ function clickPiece(location) {
             selected = true;
         } else if (selected) {
             //selecting a piece of the enemy team and can move there
-            if (pieceCheck(location)) {
-                //Move Piece
-                var oldLocation = selectedPiece.getPos();
-                updateCell(locX, locY, selectedPiece);
-                updateCell(parseInt(parseInt(oldLocation)%10), parseInt(parseInt(oldLocation)/10), null);
-                document.getElementById("img-" + String(oldLocation)).src = '';
-                selectedPiece.updatePos(location);
-                selectedPiece.updateImage();
-                playerTurn = !playerTurn;
-                enCheck();
-                speicalPawn(location-oldLocation);
-            }
-            //selecting a piece of the same team
-            removeLocs();
-            possibleLoc.length = 0;
-            selected = false;
+            movePiece(location);
         }
     } else {
         //if the square selected does not have a piece
-        if (selected) {
-            if (pieceCheck(location)) {
-                var oldLocation = selectedPiece.getPos();
-                updateCell(locX, locY, selectedPiece);
-                updateCell(parseInt(parseInt(oldLocation)%10), parseInt(parseInt(oldLocation)/10), null);
-                document.getElementById("img-" + String(oldLocation)).src = '';
-                selectedPiece.updatePos(location);
-                selectedPiece.updateImage();
-                playerTurn = !playerTurn;
-                enCheck();
-                speicalPawn(location-oldLocation);
-            }
-        }
-        removeLocs();
-        possibleLoc.length = 0;
-        selected = false;
+        movePiece(location);
     }
+}
+
+function movePiece(location) {
+    var locX = parseInt(parseInt(location)%10);
+    var locY = parseInt(parseInt(location)/10);
+    if (selected) {
+        if (pieceCheck(location)) {
+            //Move Piece
+            var oldLocation = selectedPiece.getPos();
+            updateCell(locX, locY, selectedPiece);
+            updateCell(parseInt(parseInt(oldLocation)%10), parseInt(parseInt(oldLocation)/10), null);
+            document.getElementById("img-" + String(oldLocation)).src = '';
+            selectedPiece.updatePos(location);
+            selectedPiece.updateImage();
+            playerTurn = !playerTurn;
+            enCheck();
+            speicalPawn(location-oldLocation);
+        }
+    }
+    //selecting a piece of the same team
+    removeLocs();
+    possibleLoc.length = 0;
+    selected = false;
 }
 
 function drawLocs() {
@@ -211,4 +204,8 @@ function pieceCheck(location) {
     } else {
         return possibleLoc.includes(parseInt(location));
     }
+}
+
+function checkCheck() {
+
 }
