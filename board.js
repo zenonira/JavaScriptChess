@@ -40,6 +40,10 @@ blackPawn6 = new Pawn(5,1,"black");
 blackPawn7 = new Pawn(6,1,"black");
 blackPawn8 = new Pawn(7,1,"black");
 
+var whitePieces = {};
+
+var blackPieces = {};
+
 function createBoard() {
     var button = document.getElementById("Button");
     button.style.display = "none";
@@ -76,7 +80,6 @@ function createBoard() {
             }
         }
     }
-
     resetPieces();
 }
 
@@ -92,6 +95,46 @@ function resetPieces() {
             cells[i][j] = null;
         }
     }
+
+    //Reset the white Pieces
+    whitePieces = {
+        0: whiteRook1,
+        1: whiteKnight1,
+        2: whiteBishop1,
+        3: whiteQueen,
+        4: whiteKing,
+        5: whiteBishop2,
+        6: whiteKnight2,
+        7: whiteRook2,
+        8: whitePawn1,
+        9: whitePawn2,
+        10: whitePawn3,
+        11: whitePawn4,
+        12: whitePawn5,
+        13: whitePawn6,
+        14: whitePawn7,
+        15: whitePawn8
+    };
+
+    //Reset the black Pieces
+    blackPieces = {
+        0: blackRook1,
+        1: blackKnight1,
+        2: blackBishop1,
+        3: blackQueen,
+        4: blackKing,
+        5: blackBishop2,
+        6: blackKnight2,
+        7: blackRook2,
+        8: blackPawn1,
+        9: blackPawn2,
+        10: blackPawn3,
+        11: blackPawn4,
+        12: blackPawn5,
+        13: blackPawn6,
+        14: blackPawn7,
+        15: blackPawn8
+    };
 
     //Reset pieces position trackers
     whiteRook1.updatePos2(0,7);

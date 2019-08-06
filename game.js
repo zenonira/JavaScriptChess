@@ -57,19 +57,53 @@ function clickPiece(location) {
         if (((playerTurn && pTeam == "white") || (!playerTurn && pTeam == "black")) && !selected) {
             //selecting a piece of the team whoes turn it is and no piece is selected
             selectedPiece = cells[locY][locX];
-            
             possibleLoc = selectedPiece.getMoves().slice(0);
             drawLocs();
             selected = true;
         } else if (selected) {
             //selecting a piece of the enemy team and can move there
             movePiece(location);
-            checkCheck();
         }
     } else {
         //if the square selected does not have a piece
         movePiece(location);
-        checkCheck();
+    }
+}
+
+function removePiece(location) {
+    var teamPieces = whitePieces;
+    if (playerTurn) {
+        teamPieces = blackPieces;
+    }
+    for (const key in teamPieces) {
+        var piece = teamPieces[key];
+        if (piece != null) {
+            if (piece.getPos() == location) {
+                teamPieces[key] = null;
+                console.log(teamPieces);
+            }
+        }
+    }
+}
+
+function checkCheck() {
+    inCheck = false;
+    var teamPieces = blackPieces;
+    if (playerTurn) {
+        //White turn
+        teamPieces = whitePieces;
+    }
+    for (const key in teamPieces) {
+        var piece = teamPieces[key];
+        if (piece != null) {
+            var moveSet = piece.getMoves().slice(0);
+            //Check if each piece puts the opponent in check
+            for (var i = 0; i<moveSet.length; i++) {
+                if (!inCheck) {
+                    checkList(moveSet);
+                }
+            }
+        }
     }
 }
 
@@ -80,11 +114,13 @@ function movePiece(location) {
         if (pieceCheck(location)) {
             //Move Piece
             var oldLocation = selectedPiece.getPos();
+            removePiece(location)
             updateCell(locX, locY, selectedPiece);
             updateCell(parseInt(parseInt(oldLocation)%10), parseInt(parseInt(oldLocation)/10), null);
             document.getElementById("img-" + String(oldLocation)).src = '';
             selectedPiece.updatePos(location);
             selectedPiece.updateImage();
+            checkCheck();
             playerTurn = !playerTurn;
             enCheck();
             speicalPawn(location-oldLocation);
@@ -171,10 +207,7 @@ function pieceCheck(location) {
     return possibleLoc.includes(parseInt(location));
 }
 
-function checkCheck() {
-    var futureMoves = selectedPiece.getMoves().slice(0);
-    console.log(JSON.stringify(futureMoves));
-    inCheck = false;
+function checkList(futureMoves) {
     for (const spot in futureMoves) {
         var locX = parseInt(futureMoves[spot]%10);
         var locY = parseInt(futureMoves[spot]/10);
@@ -202,7 +235,6 @@ function checkKing(locX, locY) {
             notifyCheck = "";
         }
     }
-    console.log(JSON.stringify(notifyCheck), JSON.stringify("should print this"));
     document.getElementById("checkLoc").innerHTML = notifyCheck;
     return check;
 }
