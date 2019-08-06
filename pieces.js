@@ -455,28 +455,60 @@ class King extends Piece {
     getMoves() {
         var moves = []; //Possible locations to move. Single numbers representing cordinates
         if (this.xcord > 0) {
-            moves.push((this.xcord-1) + this.ycord*10);
+            if (cells[this.ycord][this.xcord-1] == null) {
+                moves.push((this.xcord-1) + this.ycord*10);    
+            } else if (cells[this.ycord][this.xcord-1].team != this.team) {
+                moves.push((this.xcord-1) + this.ycord*10); 
+            }
             if (this.ycord > 0) {
-                moves.push((this.xcord-1) + ((this.ycord-1)*10));
+                if (cells[this.ycord-1][this.xcord-1] == null) {
+                    moves.push((this.xcord-1) + ((this.ycord-1)*10));
+                } else if (cells[this.ycord-1][this.xcord-1].team != this.team) {
+                    moves.push((this.xcord-1) + ((this.ycord-1)*10));
+                }
             }
             if (this.ycord < 7) {
-                moves.push((this.xcord-1) + ((this.ycord+1)*10));
+                if (cells[this.ycord+1][this.xcord-1] == null) {
+                    moves.push((this.xcord-1) + ((this.ycord+1)*10));
+                } else if (cells[this.ycord+1][this.xcord-1].team != this.team) {
+                    moves.push((this.xcord-1) + ((this.ycord+1)*10));
+                }
             }
         }
         if (this.xcord < 7) {
-            moves.push((this.xcord+1) + this.ycord*10);
+            if (cells[this.ycord][this.xcord+1] == null) {
+                moves.push((this.xcord+1) + this.ycord*10);   
+            } else if (cells[this.ycord][this.xcord+1].team != this.team) {
+                moves.push((this.xcord+1) + this.ycord*10);
+            }
             if (this.ycord > 0) {
-                moves.push((this.xcord+1) + ((this.ycord-1)*10));
+                if (cells[this.ycord-1][this.xcord+1] == null) {
+                    moves.push((this.xcord+1) + ((this.ycord-1)*10));
+                } else if (cells[this.ycord-1][this.xcord+1].team != this.team) {
+                    moves.push((this.xcord+1) + ((this.ycord-1)*10));
+                }
             }
             if (this.ycord < 7) {
-                moves.push((this.xcord+1) + ((this.ycord+1)*10));
+                if (cells[this.ycord+1][this.xcord+1] == null) {
+                    moves.push((this.xcord+1) + ((this.ycord+1)*10));   
+                } else if (cells[this.ycord+1][this.xcord+1].team != this.team) {
+                    moves.push((this.xcord+1) + ((this.ycord+1)*10));
+                }
             }
         }
         if (this.ycord > 0) {
-            moves.push(this.xcord + ((this.ycord-1)*10));
+            if (cells[this.ycord-1][this.xcord] == null) {
+                moves.push(this.xcord + ((this.ycord-1)*10));
+            } else if (cells[this.ycord-1][this.xcord].team != this.team) {
+                moves.push(this.xcord + ((this.ycord-1)*10));
+            }
         }
         if (this.ycord < 7) {
-            moves.push(this.xcord + ((this.ycord+1)*10));
+            if (cells[this.ycord+1][this.xcord] == null) {
+                moves.push(this.xcord + ((this.ycord+1)*10));   
+            } else if (cells[this.ycord+1][this.xcord].team != this.team) {
+                moves.push(this.xcord + ((this.ycord+1)*10));
+            }
         }
         return moves;
     }
