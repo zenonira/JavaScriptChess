@@ -70,6 +70,80 @@ function clickPiece(location) {
     }
 }
 
+function movePiece(location) {
+    // If no piece selected, do nothing
+    if (selected) {
+        var locX = parseInt(parseInt(location)%10);
+        var locY = parseInt(parseInt(location)/10);
+        var oldLocation = selectedPiece.getPos();
+        if (checkOkMove(parseInt(parseInt(oldLocation)%10), parseInt(parseInt(oldLocation)/10), locX, locY)) {
+            if (pieceCheck(location)) {
+                //Move Piece
+                removePiece(location)
+                // updateCell(locX, locY, selectedPiece);
+                updateCell(parseInt(parseInt(oldLocation)%10), parseInt(parseInt(oldLocation)/10), null);
+                document.getElementById("img-" + String(oldLocation)).src = '';
+                selectedPiece.updatePos(location);
+                selectedPiece.updateImage();
+                checkCheck(playerTurn);
+                playerTurn = !playerTurn;
+                enCheck();
+                speicalPawn(location-oldLocation);
+            }
+        }
+        removeLocs();
+        possibleLoc.length = 0;
+        selected = false;
+    }
+}
+
+function checkOkMove(oldLocX, oldLocY, locX, locY) {
+    var savePiece = cells[oldLocY][oldLocX];
+    // Check to see if the piece to be moved would cause the player to be in check if moved 
+    // (Moving a random piece or moving a piece that is preventing check), if moving the king skip this step
+    updateCell(oldLocX, oldLocY, null);
+    if (savePiece != whiteKing && savePiece != blackKing) {
+        checkCheck(!playerTurn);
+        if (inCheck) {
+            inCheck = false;
+            updateCell(oldLocX, oldLocY, savePiece);
+            // cells[oldLocY][oldLocX] = savePiece;
+        } else {
+            updateCell(locX, locY, savePiece);
+            return true;
+        }
+    }
+    // Check to see if moving the piece to the new location would cause check (Moving King or Taking Piece)
+    // cells[locY][locX] = savePiece;
+    var savePiece2 = cells[locY][locX];
+    removePiece((locY*10)+locX);
+    updateCell(locX, locY, savePiece);
+    checkCheck(!playerTurn);
+    if (inCheck) {
+        inCheck = false;
+        // cells[locY][locX] = null;
+        updateCell(locX, locY, savePiece2);
+        updateCell(oldLocX, oldLocY, savePiece);
+        if (!playerTurn) {
+            //Got rid of a white piece to see
+            for (const key in whitePieces) {
+                if (whitePieces[key] == null) {
+                    whitePieces[key] = savePiece2;
+                }
+            }
+        } else {
+            //Got rid of a black piece to see
+            for (const key in blackPieces) {
+                if (blackPieces[key] == null) {
+                    blackPieces[key] = savePiece2;
+                }
+            }
+        }
+        return false;
+    }
+    return true;
+}
+
 function removePiece(location) {
     var teamPieces = whitePieces;
     if (playerTurn) {
@@ -80,56 +154,31 @@ function removePiece(location) {
         if (piece != null) {
             if (piece.getPos() == location) {
                 teamPieces[key] = null;
-                console.log(teamPieces);
             }
         }
     }
 }
 
-function checkCheck() {
+//If teamCheck is true, check if black is in check. If teamCheck is false, check if white team is in check
+function checkCheck(teamCheck) {
     inCheck = false;
     var teamPieces = blackPieces;
-    if (playerTurn) {
+    if (teamCheck) {
         //White turn
         teamPieces = whitePieces;
     }
     for (const key in teamPieces) {
         var piece = teamPieces[key];
-        if (piece != null) {
+        if (piece != null && !inCheck) {
             var moveSet = piece.getMoves().slice(0);
             //Check if each piece puts the opponent in check
             for (var i = 0; i<moveSet.length; i++) {
                 if (!inCheck) {
-                    checkList(moveSet);
+                    checkList(moveSet, teamCheck);
                 }
             }
         }
     }
-}
-
-function movePiece(location) {
-    var locX = parseInt(parseInt(location)%10);
-    var locY = parseInt(parseInt(location)/10);
-    if (selected) {
-        if (pieceCheck(location)) {
-            //Move Piece
-            var oldLocation = selectedPiece.getPos();
-            removePiece(location)
-            updateCell(locX, locY, selectedPiece);
-            updateCell(parseInt(parseInt(oldLocation)%10), parseInt(parseInt(oldLocation)/10), null);
-            document.getElementById("img-" + String(oldLocation)).src = '';
-            selectedPiece.updatePos(location);
-            selectedPiece.updateImage();
-            checkCheck();
-            playerTurn = !playerTurn;
-            enCheck();
-            speicalPawn(location-oldLocation);
-        }
-    }
-    //selecting a piece of the same team
-    removeLocs();
-    possibleLoc.length = 0;
-    selected = false;
 }
 
 function drawLocs() {
@@ -207,20 +256,20 @@ function pieceCheck(location) {
     return possibleLoc.includes(parseInt(location));
 }
 
-function checkList(futureMoves) {
+function checkList(futureMoves, teamCheck) {
     for (const spot in futureMoves) {
         var locX = parseInt(futureMoves[spot]%10);
         var locY = parseInt(futureMoves[spot]/10);
         if (!inCheck) {
-            inCheck = checkKing(locX, locY);;
+            inCheck = checkKing(locX, locY, teamCheck);
         }
     }
 }
 
-function checkKing(locX, locY) {
+function checkKing(locX, locY, teamCheck) {
     var notifyCheck = '';
     var check = false;
-    if (selectedPiece.team == "white") {
+    if (teamCheck) {
         if (cells[locY][locX] == blackKing) {
             notifyCheck = "Black is in Check";
             check = true;
