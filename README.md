@@ -11,5 +11,5 @@ To run, download zip file and extract to desired folder. Execute(double click) c
 
 Future Things to add:
     -Game end whith checkMate
-    -If in check, only move to get out of check
-    -Castling
+    -Don't castle through check
+    -Keep score of player wins and draws

@@ -26,6 +26,8 @@ var showMovesFlag = false;
 
 var inCheck = false;
 
+var castleOption = false;
+
 function toggleShow() {
     if (showMovesFlag) {
         //change to false
@@ -76,19 +78,43 @@ function movePiece(location) {
         var locX = parseInt(parseInt(location)%10);
         var locY = parseInt(parseInt(location)/10);
         var oldLocation = selectedPiece.getPos();
-        if (checkOkMove(parseInt(parseInt(oldLocation)%10), parseInt(parseInt(oldLocation)/10), locX, locY)) {
-            if (pieceCheck(location)) {
-                //Move Piece
-                removePiece(location)
-                // updateCell(locX, locY, selectedPiece);
-                updateCell(parseInt(parseInt(oldLocation)%10), parseInt(parseInt(oldLocation)/10), null);
-                document.getElementById("img-" + String(oldLocation)).src = '';
-                selectedPiece.updatePos(location);
-                selectedPiece.updateImage();
-                checkCheck(playerTurn);
+        if (pieceCheck(location)) {
+            if (checkOkMove(parseInt(parseInt(oldLocation)%10), parseInt(parseInt(oldLocation)/10), locX, locY)) {
+                if (castleOption && cells[locY][locX] != null) {
+                    var castleRook;
+                    //Castle
+                    updateCell(locX, locY, null);
+                    if (locX > 0) {
+                        //Right side castle
+                        castle(oldLocation, 6, locY, selectedPiece); //Move king
+                        if (playerTurn) {
+                            castleRook = whiteRook2; //White castleing Right
+                        } else {
+                            castleRook = blackRook2; //Black Castleing Right
+                        }
+                        castle(castleRook.getPos(), 5, locY, castleRook); //Move Rook
+                    } else {
+                        //Left side castle
+                        castle(oldLocation, 2, locY, selectedPiece);
+                        if (playerTurn) {
+                            castleRook = whiteRook1; //White Casteling Left
+                        } else {
+                            castleRook = blackRook1; //Black Castleing Left
+                        }
+                        castle(castleRook.getPos(), 3, locY, castleRook); //Move Rook
+                    }
+                } else {
+                    //Move Piece
+                    removePiece(location); //If moving to an opponent piece, remove from checking Check sequence
+                    updateCell(parseInt(parseInt(oldLocation)%10), parseInt(parseInt(oldLocation)/10), null);
+                    document.getElementById("img-" + String(oldLocation)).src = '';
+                    selectedPiece.updatePos(location);
+                    selectedPiece.updateImage();
+                    checkCheck(playerTurn);
+                    enCheck();
+                    specialMoves(location-oldLocation);
+                }
                 playerTurn = !playerTurn;
-                enCheck();
-                speicalPawn(location-oldLocation);
             }
         }
         removeLocs();
@@ -97,8 +123,16 @@ function movePiece(location) {
     }
 }
 
+function castle(oldLoc, locX, locY, p) {
+    document.getElementById("img-" + String(oldLoc)).src = '';
+    updateCell(locX, locY, p);
+    p.updatePos2(locX, locY);
+    p.updateImage();
+}
+
 function checkOkMove(oldLocX, oldLocY, locX, locY) {
     var savePiece = cells[oldLocY][oldLocX];
+    var oldText = document.getElementById("checkLoc").innerHTML;
     // Check to see if the piece to be moved would cause the player to be in check if moved 
     // (Moving a random piece or moving a piece that is preventing check), if moving the king skip this step
     updateCell(oldLocX, oldLocY, null);
@@ -106,10 +140,10 @@ function checkOkMove(oldLocX, oldLocY, locX, locY) {
         checkCheck(!playerTurn);
         if (inCheck) {
             inCheck = false;
-            updateCell(oldLocX, oldLocY, savePiece);
             // cells[oldLocY][oldLocX] = savePiece;
         } else {
             updateCell(locX, locY, savePiece);
+            document.getElementById("checkLoc").innerHTML = oldText;
             return true;
         }
     }
@@ -122,6 +156,7 @@ function checkOkMove(oldLocX, oldLocY, locX, locY) {
     if (inCheck) {
         inCheck = false;
         // cells[locY][locX] = null;
+        updateCell(oldLocX, oldLocY, savePiece);
         updateCell(locX, locY, savePiece2);
         updateCell(oldLocX, oldLocY, savePiece);
         if (!playerTurn) {
@@ -139,8 +174,10 @@ function checkOkMove(oldLocX, oldLocY, locX, locY) {
                 }
             }
         }
+        document.getElementById("checkLoc").innerHTML = "This move would put you in check or keep you in check";
         return false;
     }
+    document.getElementById("checkLoc").innerHTML = oldText;
     return true;
 }
 
@@ -183,13 +220,22 @@ function checkCheck(teamCheck) {
 
 function drawLocs() {
     var drawRed = true;
+    castleOption = false;
     for (const spot in possibleLoc) {
         drawRed = true;
         var locX = parseInt(possibleLoc[spot]%10);
         var locY = parseInt(possibleLoc[spot]/10);
         if (cells[locY][locX] !== null) {
             if (((playerTurn && cells[locY][locX].team == "white") || (!playerTurn && cells[locY][locX].team == "black"))) {
-                drawRed = false;
+                if (selectedPiece == whiteKing || selectedPiece == blackKing) {
+                    if (!selectedPiece.canCastle) {
+                        drawRed = false;
+                    } else {
+                        castleOption = true;
+                    }
+                } else {
+                    drawRed = false;
+                }
             }
         }
         if (drawRed && showMovesFlag) {
@@ -198,7 +244,7 @@ function drawLocs() {
     }
 }
 
-function speicalPawn(movement) {
+function specialMoves(movement) {
     if (selectedPiece == whitePawn1 || selectedPiece == whitePawn2 || selectedPiece == whitePawn3 || selectedPiece == whitePawn4 ||
         selectedPiece == whitePawn5 || selectedPiece == whitePawn6 || selectedPiece == whitePawn7 || selectedPiece == whitePawn8 ||
         selectedPiece == blackPawn1 || selectedPiece == blackPawn2 || selectedPiece == blackPawn3 || selectedPiece == blackPawn4 ||
@@ -213,6 +259,9 @@ function speicalPawn(movement) {
         if (Math.abs(movement) == 20) {
             enLocs[tempAdd] = selectedPiece.getPos()-backSpace;
         }
+        selectedPiece.firstMoveFalse();
+    } else if (selectedPiece == whiteKing || selectedPiece == blackKing || selectedPiece == whiteRook1 || selectedPiece == whiteRook2 ||
+               selectedPiece == blackRook1 || selectedPiece == blackRook2) {
         selectedPiece.firstMoveFalse();
     }
 }

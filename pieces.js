@@ -258,6 +258,7 @@ class Bishop extends Piece {
 class Rook extends Piece {
     constructor(xcord, ycord, team) {
         super(xcord, ycord, team);
+        this.firstMove = true;
     }
     getMoves() {
         var moves = []; //Possible locations to move. Single numbers representing cordinates
@@ -325,6 +326,9 @@ class Rook extends Piece {
     }
     updateImage() {
         document.getElementById("img-" + String(super.getPos())).src = this.getImage();
+    }
+    firstMoveFalse() {
+        this.firstMove = false;
     }
 }
 
@@ -451,6 +455,8 @@ class Queen extends Piece {
 class King extends Piece {
     constructor(xcord, ycord, team) {
         super(xcord, ycord, team);
+        this.firstMove = true;
+        this.canCastle = false;
     }
     getMoves() {
         var moves = []; //Possible locations to move. Single numbers representing cordinates
@@ -510,6 +516,67 @@ class King extends Piece {
                 moves.push(this.xcord + ((this.ycord+1)*10));
             }
         }
+
+        //Castling
+        if (this.firstMove) {
+            if (this.team == "white") {
+                //Checking if White Rook on left of board has moved
+                if (cells[7][0] == whiteRook1) {
+                    if (cells[7][0].firstMove) {
+                        //Check if no pieces are inbetween the two
+                        if (cells[7][1] == null && cells[7][2] == null && cells[7][3] == null) {
+                            moves.push(70); //Bottom left square
+                            this.canCastle = true;
+                        } else {
+                            this.canCastle = false;
+                        }
+                    } else {
+                        this.canCastle = false;
+                    }
+                } else {
+                    this.canCastle = false;
+                }
+                //Checking if White Rook on right has moved
+                if (cells[7][7] == whiteRook2) {
+                    if (cells[7][7].firstMove) {
+                        //Check if no pieces are inbetween the two
+                        if (cells[7][6] == null && cells[7][5] == null) {
+                            moves.push(77); //Bottom right square
+                            this.canCastle = true;
+                        }
+                    }
+                }
+            } else {
+                //Checking if Black Rook on left has moved
+                if (cells[0][0] == blackRook1) {
+                    if (cells[0][0].firstMove) {
+                        //Check if no pieces are inbetween the two
+                        if (cells[0][1] == null && cells[0][2] == null && cells[0][3] == null) {
+                            moves.push(0);
+                            this.canCastle = true;
+                        } else {
+                            this.canCastle = false;
+                        }
+                    } else {
+                        this.canCastle = false;
+                    }
+                } else {
+                    this.canCastle = false;
+                }
+                //Checking if Black Rook on right has moved
+                if (cells[0][7] == blackRook2) {
+                    if (cells[0][7].firstMove) {
+                        //Checking if no pieces are inbetween the two
+                        if (cells[0][6] == null && cells[0][5] == null) {
+                            moves.push(7);
+                            this.canCastle = true;
+                        }
+                    }  
+                }
+            }
+        } else {
+            this.canCastle = false;
+        }
         return moves;
     }
     getImage() {
@@ -521,6 +588,9 @@ class King extends Piece {
     }
     updateImage() {
         document.getElementById("img-" + String(super.getPos())).src = this.getImage();
+    }
+    firstMoveFalse() {
+        this.firstMove = false;
     }
 }
 
