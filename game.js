@@ -245,10 +245,7 @@ function drawLocs() {
 }
 
 function specialMoves(movement) {
-    if (selectedPiece == whitePawn1 || selectedPiece == whitePawn2 || selectedPiece == whitePawn3 || selectedPiece == whitePawn4 ||
-        selectedPiece == whitePawn5 || selectedPiece == whitePawn6 || selectedPiece == whitePawn7 || selectedPiece == whitePawn8 ||
-        selectedPiece == blackPawn1 || selectedPiece == blackPawn2 || selectedPiece == blackPawn3 || selectedPiece == blackPawn4 ||
-        selectedPiece == blackPawn5 || selectedPiece == blackPawn6 || selectedPiece == blackPawn7 || selectedPiece == blackPawn8) {
+    if (selectedPiece.returnName() === "Pawn") {
         var tempAdd = selectedPiece.xcord;
         var backSpace = 10;
         if (selectedPiece.team == 'white') {
@@ -286,17 +283,19 @@ function removeLocs() {
     }
 }
 
+//Problem Moving a piece behind a pawn will get rid of it (moving a piece into a spot that woudl be an en passant move)
 function enCheck() {
     for (let i = 0; i < enLocs.length; i++) {
-        if (enLocs[i] == selectedPiece.getPos()) {
-            var backSpace = 10;
+        if (enLocs[i] == selectedPiece.getPos() && selectedPiece.returnName() === "Pawn") {
+            var backSpace = -10;
             if (playerTurn) {
                 //If white team
-                backSpace = -10;
+                backSpace = 10;
             }
             var emptyCell = selectedPiece.getPos()+backSpace;
             updateCell(selectedPiece.xcord, selectedPiece.ycord+(backSpace/10), null);
             document.getElementById("img-" + String(emptyCell)).src = '';
+            removePiece(((selectedPiece.ycord+(backSpace/10))*10)+selectedPiece.xcord);
         }
     }
 }

@@ -13,3 +13,4 @@ Future Things to add:
     -Game end whith checkMate
     -Don't castle through check
     -Keep score of player wins and draws
+    -If Pawn at end of board, change to Queen, Knight, Bishop or Rook

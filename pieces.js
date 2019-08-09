@@ -32,6 +32,9 @@ class Pawn extends Piece {
         super(xcord, ycord, team);
         this.firstMove = true;
     }
+    returnName() {
+        return "Pawn";
+    }
     /*
     Output: Updates moves in the parent class, which is an array of numbers, of the possible moves of the pawn
     */
@@ -103,6 +106,9 @@ class Pawn extends Piece {
 class Knight extends Piece {
     constructor(xcord, ycord, team) {
         super(xcord, ycord, team);
+    }
+    returnName() {
+        return "Knight";
     }
     /*
     Output: Updates moves in the parent class, which is an array of numbers, of the possible moves of the piece
@@ -191,6 +197,9 @@ class Bishop extends Piece {
     constructor(xcord, ycord, team, type) {
         super(xcord, ycord, team);
     }
+    returnName() {
+        return "Bishop";
+    }
     getMoves() {
         var moves = []; //Possible locations to move. Single numbers representing cordinates
         var i = 1;
@@ -259,6 +268,9 @@ class Rook extends Piece {
     constructor(xcord, ycord, team) {
         super(xcord, ycord, team);
         this.firstMove = true;
+    }
+    returnName() {
+        return "Rook";
     }
     getMoves() {
         var moves = []; //Possible locations to move. Single numbers representing cordinates
@@ -335,6 +347,9 @@ class Rook extends Piece {
 class Queen extends Piece {
     constructor(xcord, ycord, team) {
         super(xcord, ycord, team);
+    }
+    returnName() {
+        return "Queen";
     }
     getMoves() {
         var moves = []; //Possible locations to move. Single numbers representing cordinates
@@ -457,6 +472,9 @@ class King extends Piece {
         super(xcord, ycord, team);
         this.firstMove = true;
         this.canCastle = false;
+    }
+    returnName() {
+        return "King";
     }
     getMoves() {
         var moves = []; //Possible locations to move. Single numbers representing cordinates
