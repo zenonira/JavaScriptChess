@@ -339,6 +339,9 @@ class Rook extends Piece {
     updateImage() {
         document.getElementById("img-" + String(super.getPos())).src = this.getImage();
     }
+    firstMoveTrue() {
+        this.firstMove = true;
+    }
     firstMoveFalse() {
         this.firstMove = false;
     }
@@ -606,6 +609,9 @@ class King extends Piece {
     }
     updateImage() {
         document.getElementById("img-" + String(super.getPos())).src = this.getImage();
+    }
+    firstMoveTrue() {
+        this.firstMove = true;
     }
     firstMoveFalse() {
         this.firstMove = false;

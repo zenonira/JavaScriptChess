@@ -260,6 +260,14 @@ function resetPieces() {
     blackPawn7.firstMoveTrue();
     blackPawn8.firstMoveTrue();
 
+    //Reset King and Rook first move
+    whiteKing.firstMoveTrue();
+    blackKing.firstMoveTrue();
+    whiteRook1.firstMoveTrue();
+    whiteRook2.firstMoveTrue();
+    blackRook1.firstMoveTrue();
+    blackRook2.firstMoveTrue();
+
     //Make sure White goes first
     playerTurn = true;
     //Make sure no pieces are selected
