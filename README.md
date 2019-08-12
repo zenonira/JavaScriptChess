@@ -10,7 +10,9 @@ Show Possible Moves button allows the users to toggle whether or not to show pos
 To run, download zip file and extract to desired folder. Execute(double click) chess.html which will open up a web browser (I have been using chrome)
 
 Future Things to add:
-    -Game end whith checkMate
-    -Don't castle through check
-    -Keep score of player wins and draws
-    -If Pawn at end of board, change to Queen, Knight, Bishop or Rook
+    -Game end whith checkMate 
+    -Don't castle through check. Thoughts: Artificially move king to the spots that need to be checked and check to see if that causes check
+    -Keep score of player wins and draws. Thoughts: Include a counter that increases when reset is pressed, give a point to the team not in check or a stalemate.
+    -If Pawn at end of board, change to Queen, Knight, Bishop or Rook. Thoughts: Have an extra amount of those for both teams that you can just replace
+
+**Problem: cant castle if rook in in jeopardy

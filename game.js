@@ -83,25 +83,40 @@ function movePiece(location) {
                 if (castleOption && cells[locY][locX] != null) {
                     var castleRook;
                     //Castle
-                    updateCell(locX, locY, null);
                     if (locX > 0) {
                         //Right side castle
-                        castle(oldLocation, 6, locY, selectedPiece); //Move king
                         if (playerTurn) {
                             castleRook = whiteRook2; //White castleing Right
                         } else {
                             castleRook = blackRook2; //Black Castleing Right
                         }
-                        castle(castleRook.getPos(), 5, locY, castleRook); //Move Rook
+                        if (kingCastleCheck("right", locY)) {
+                            updateCell(locX, locY, null);
+                            updateCell(parseInt(parseInt(oldLocation)/10), parseInt(parseInt(oldLocation)%10), null);
+                            castle(oldLocation, 6, locY, selectedPiece); //Move King
+                            castle(castleRook.getPos(), 5, locY, castleRook); //Move Rook
+                            document.getElementById("checkLoc").innerHTML = "Castling";
+                        } else {
+                            document.getElementById("checkLoc").innerHTML = "Can not Castle through check";
+                            playerTurn = !playerTurn; //Flip so the all flip does not screw things up
+                        }
                     } else {
                         //Left side castle
-                        castle(oldLocation, 2, locY, selectedPiece);
                         if (playerTurn) {
                             castleRook = whiteRook1; //White Casteling Left
                         } else {
                             castleRook = blackRook1; //Black Castleing Left
                         }
-                        castle(castleRook.getPos(), 3, locY, castleRook); //Move Rook
+                        if (kingCastleCheck("left", locY)) {
+                            updateCell(locX, locY, null);
+                            updateCell(parseInt(parseInt(oldLocation)/10), parseInt(parseInt(oldLocation)%10), null);
+                            castle(oldLocation, 2, locY, selectedPiece); // Move King
+                            castle(castleRook.getPos(), 3, locY, castleRook); //Move Rook
+                            document.getElementById("checkLoc").innerHTML = "Castling";
+                        } else {
+                            document.getElementById("checkLoc").innerHTML = "Can not Castle through check";
+                            playerTurn = !playerTurn; //Flip so the all flip does not screw things up
+                        }
                     }
                 } else {
                     //Move Piece
@@ -123,6 +138,34 @@ function movePiece(location) {
     }
 }
 
+function kingCastleCheck(side, locY) {
+    //Should only be ran when trying to castle, but just a precausion
+    if (selectedPiece.returnName() === "King") {
+        var direction = 1; // If direction = 1 check right, if -1 check left
+        if (side === "left") {
+            direction = -1;
+        }
+        //Check if the King would be moving through check if castling left
+        console.log("checking", locY, 4+direction);
+        updateCell(4+direction, locY, selectedPiece);
+        // cells[locY][4+direction] = selectedPiece;
+        console.log(cells[locY][4+direction]);
+        checkCheck(!playerTurn);
+        updateCell(4+direction, locY, null);
+        // cells[locY][4+direction] = null;
+        if (!inCheck) {
+            cells[locY][4+(direction*2)] = selectedPiece;
+            console.log("checking", locY, 4+(direction*2));
+            checkCheck(!playerTurn);
+            cells[locY][4+(direction*2)] = null;
+            console.log("should be true", inCheck);
+            return (!inCheck); //Return true if not in check, so castling is ok
+        } else {
+            return false;
+        }
+    }
+}
+
 function castle(oldLoc, locX, locY, p) {
     document.getElementById("img-" + String(oldLoc)).src = '';
     updateCell(locX, locY, p);
@@ -130,8 +173,9 @@ function castle(oldLoc, locX, locY, p) {
     p.updateImage();
 }
 
+// Special Case, dont move king to rook spot and check for check
 function checkOkMove(oldLocX, oldLocY, locX, locY) {
-    var savePiece = cells[oldLocY][oldLocX];
+    var savePiece = cells[oldLocY][oldLocX]; // save piece should be selected piece
     var oldText = document.getElementById("checkLoc").innerHTML;
     // Check to see if the piece to be moved would cause the player to be in check if moved 
     // (Moving a random piece or moving a piece that is preventing check), if moving the king skip this step
@@ -158,7 +202,6 @@ function checkOkMove(oldLocX, oldLocY, locX, locY) {
         // cells[locY][locX] = null;
         updateCell(oldLocX, oldLocY, savePiece);
         updateCell(locX, locY, savePiece2);
-        updateCell(oldLocX, oldLocY, savePiece);
         if (!playerTurn) {
             //Got rid of a white piece to see
             for (const key in whitePieces) {
@@ -177,6 +220,8 @@ function checkOkMove(oldLocX, oldLocY, locX, locY) {
         document.getElementById("checkLoc").innerHTML = "This move would put you in check or keep you in check";
         return false;
     }
+    updateCell(oldLocX, oldLocY, selectedPiece);
+    updateCell(locX, locY, savePiece2);
     document.getElementById("checkLoc").innerHTML = oldText;
     return true;
 }
@@ -201,7 +246,6 @@ function checkCheck(teamCheck) {
     inCheck = false;
     var teamPieces = blackPieces;
     if (teamCheck) {
-        //White turn
         teamPieces = whitePieces;
     }
     for (const key in teamPieces) {
@@ -283,7 +327,6 @@ function removeLocs() {
     }
 }
 
-//Problem Moving a piece behind a pawn will get rid of it (moving a piece into a spot that woudl be an en passant move)
 function enCheck() {
     for (let i = 0; i < enLocs.length; i++) {
         if (enLocs[i] == selectedPiece.getPos() && selectedPiece.returnName() === "Pawn") {
