@@ -80,10 +80,11 @@ function movePiece(location) {
         var oldLocation = selectedPiece.getPos();
         if (pieceCheck(location)) {
             if (checkOkMove(parseInt(parseInt(oldLocation)%10), parseInt(parseInt(oldLocation)/10), locX, locY)) {
-                if (castleOption && cells[locY][locX] != null) {
+                if (castleOption) {
                     var castleRook;
                     //Castle
-                    if (locX > 0) {
+                    console.log(JSON.stringify(cells));
+                    if (locX > 4) {
                         //Right side castle
                         if (playerTurn) {
                             castleRook = whiteRook2; //White castleing Right
@@ -91,8 +92,9 @@ function movePiece(location) {
                             castleRook = blackRook2; //Black Castleing Right
                         }
                         if (kingCastleCheck("right", locY)) {
-                            updateCell(locX, locY, null);
-                            updateCell(parseInt(parseInt(oldLocation)/10), parseInt(parseInt(oldLocation)%10), null);
+                            updateCell(locX+1, locY, null);
+                            updateCell(parseInt(parseInt(oldLocation)%10), parseInt(parseInt(oldLocation)/10), null);
+                            console.log(JSON.stringify(cells));
                             castle(oldLocation, 6, locY, selectedPiece); //Move King
                             castle(castleRook.getPos(), 5, locY, castleRook); //Move Rook
                             document.getElementById("checkLoc").innerHTML = "Castling";
@@ -108,8 +110,8 @@ function movePiece(location) {
                             castleRook = blackRook1; //Black Castleing Left
                         }
                         if (kingCastleCheck("left", locY)) {
-                            updateCell(locX, locY, null);
-                            updateCell(parseInt(parseInt(oldLocation)/10), parseInt(parseInt(oldLocation)%10), null);
+                            updateCell(locX-2, locY, null);
+                            updateCell(parseInt(parseInt(oldLocation)%10), parseInt(parseInt(oldLocation)/10), null);
                             castle(oldLocation, 2, locY, selectedPiece); // Move King
                             castle(castleRook.getPos(), 3, locY, castleRook); //Move Rook
                             document.getElementById("checkLoc").innerHTML = "Castling";
@@ -118,6 +120,7 @@ function movePiece(location) {
                             playerTurn = !playerTurn; //Flip so the all flip does not screw things up
                         }
                     }
+                    console.log(cells);
                 } else {
                     //Move Piece
                     removePiece(location); //If moving to an opponent piece, remove from checking Check sequence
@@ -145,24 +148,11 @@ function kingCastleCheck(side, locY) {
         if (side === "left") {
             direction = -1;
         }
-        //Check if the King would be moving through check if castling left
-        console.log("checking", locY, 4+direction);
+        //Check if the King would be moving through check if castling
         updateCell(4+direction, locY, selectedPiece);
-        // cells[locY][4+direction] = selectedPiece;
-        console.log(cells[locY][4+direction]);
         checkCheck(!playerTurn);
         updateCell(4+direction, locY, null);
-        // cells[locY][4+direction] = null;
-        if (!inCheck) {
-            cells[locY][4+(direction*2)] = selectedPiece;
-            console.log("checking", locY, 4+(direction*2));
-            checkCheck(!playerTurn);
-            cells[locY][4+(direction*2)] = null;
-            console.log("should be true", inCheck);
-            return (!inCheck); //Return true if not in check, so castling is ok
-        } else {
-            return false;
-        }
+        return(!inCheck); //Dont need to check last position as it has already been checked by checkOkMove()
     }
 }
 
@@ -271,15 +261,13 @@ function drawLocs() {
         var locY = parseInt(possibleLoc[spot]/10);
         if (cells[locY][locX] !== null) {
             if (((playerTurn && cells[locY][locX].team == "white") || (!playerTurn && cells[locY][locX].team == "black"))) {
-                if (selectedPiece == whiteKing || selectedPiece == blackKing) {
-                    if (!selectedPiece.canCastle) {
-                        drawRed = false;
-                    } else {
-                        castleOption = true;
-                    }
-                } else {
                     drawRed = false;
-                }
+            }
+        } else if (selectedPiece.returnName() === "King" && parseInt(spot) == (possibleLoc.length)-1) {
+            if (!selectedPiece.canCastle) {
+                drawRed = false;
+            } else {
+                castleOption = true;
             }
         }
         if (drawRed && showMovesFlag) {
@@ -301,8 +289,7 @@ function specialMoves(movement) {
             enLocs[tempAdd] = selectedPiece.getPos()-backSpace;
         }
         selectedPiece.firstMoveFalse();
-    } else if (selectedPiece == whiteKing || selectedPiece == blackKing || selectedPiece == whiteRook1 || selectedPiece == whiteRook2 ||
-               selectedPiece == blackRook1 || selectedPiece == blackRook2) {
+    } else if (selectedPiece.returnName() === "King" || selectedPiece.returnName() === "Rook") {
         selectedPiece.firstMoveFalse();
     }
 }

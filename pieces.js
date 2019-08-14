@@ -546,7 +546,7 @@ class King extends Piece {
                     if (cells[7][0].firstMove) {
                         //Check if no pieces are inbetween the two
                         if (cells[7][1] == null && cells[7][2] == null && cells[7][3] == null) {
-                            moves.push(70); //Bottom left square
+                            moves.push(72); //Bottom left square
                             this.canCastle = true;
                         } else {
                             this.canCastle = false;
@@ -562,7 +562,7 @@ class King extends Piece {
                     if (cells[7][7].firstMove) {
                         //Check if no pieces are inbetween the two
                         if (cells[7][6] == null && cells[7][5] == null) {
-                            moves.push(77); //Bottom right square
+                            moves.push(76); //Bottom right square
                             this.canCastle = true;
                         }
                     }
@@ -573,7 +573,7 @@ class King extends Piece {
                     if (cells[0][0].firstMove) {
                         //Check if no pieces are inbetween the two
                         if (cells[0][1] == null && cells[0][2] == null && cells[0][3] == null) {
-                            moves.push(0);
+                            moves.push(2);
                             this.canCastle = true;
                         } else {
                             this.canCastle = false;
@@ -589,7 +589,7 @@ class King extends Piece {
                     if (cells[0][7].firstMove) {
                         //Checking if no pieces are inbetween the two
                         if (cells[0][6] == null && cells[0][5] == null) {
-                            moves.push(7);
+                            moves.push(6);
                             this.canCastle = true;
                         }
                     }  
